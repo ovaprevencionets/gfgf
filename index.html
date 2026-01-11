@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Guardar IP en Firebase</title>
+</head>
+<body>
+
+<h2>Guardar mi IP</h2>
+<button id="guardar">Aceptar y guardar IP</button>
+<p id="estado"></p>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-app.js";
+  import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyBkqQAe7RgEphm_2MBob-2SEsQMDTQkx4c",
+    authDomain: "studio-2168264306-abb55.firebaseapp.com",
+    projectId: "studio-2168264306-abb55",
+    storageBucket: "studio-2168264306-abb55.firebasestorage.app",
+    messagingSenderId: "165026938248",
+    appId: "1:165026938248:web:e32ac2f9122ec33fb28e3d"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  document.getElementById("guardar").onclick = async () => {
+    try {
+      const res = await fetch("https://api.ipify.org?format=json");
+      const data = await res.json();
+
+      await addDoc(collection(db, "ips"), {
+        ip: data.ip,
+        consentimiento: true,
+        fecha: serverTimestamp()
+      });
+
+      document.getElementById("estado").innerText = "IP guardada correctamente ✅";
+    } catch (e) {
+      document.getElementById("estado").innerText = "Error ❌";
+      console.error(e);
+    }
+  };
+</script>
+
+</body>
+</html>
